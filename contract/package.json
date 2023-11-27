@@ -1,0 +1,30 @@
+{
+    "name": "tools.cXc.world",
+    "type": "module",
+    "version": "1.0.0",
+    "description": "Tools by cXc",
+    "scripts": {
+        "postinstall": "bun install -y --ignore-scripts",
+        "build:dev": "cd contract; blanc++ -I include src/gift_star.cpp",
+        "build:prod": "cd contract; cdt-cpp -I include src/gift_star.cpp"
+    },
+    "keywords": [
+        "antelope",
+        "smart",
+        "contract"
+    ],
+    "author": {
+        "name": "cXc",
+        "email": "douglas@cxc.world",
+        "url": "https://github.com/currentxchange"
+    },
+    "devDependencies": {
+        "@proton/vert": "^0.3.22",
+        "@wharfkit/antelope": "^1.0.2",
+        "bun-types": "latest",
+        "proton-tsc": "^0.3.58"
+    },
+    "peerDependencies": {
+        "typescript": "^5.0.0"
+    }
+}
