@@ -15,11 +15,16 @@
     import { ExplorerApi, RpcApi } from "atomicassets";
     import { onMount } from "svelte";
 
+    let standardPickerOpen = false;
+    let variationPickerOpen = false;
+    const standards = ["literature", "music", "video", "photo", "image"];
+    const variations = ["web4", "light"];
     let selectedStandard = "";
     let selectedVariation = "";
     let fieldList = [];
     let schemaName = "";
     const userInput = writable({});
+    const isInstructionsOpen = writable(false);
     let collectionPickerOpen = false;
     let collections = []; // Array to store fetched collection names
 
@@ -28,6 +33,10 @@
             fetchCollections();
         }
     });
+
+    $: if (selectedStandard && selectedVariation) {
+        loadFieldsForStandard(selectedStandard, selectedVariation);
+    }
 
     async function fetchCollections() {
         if (!$session.actor) return; // Return early if actor is not set
@@ -81,7 +90,7 @@
                 type: field.type,
             })); // Map each field to the required format
 
-            console.log("finalFields",finalFields);
+        console.log("finalFields", finalFields);
 
         const schemaData = {
             authorized_creator: $session.actor, // Replace with actual user data
@@ -113,71 +122,139 @@
 <section class="flex flex-col items-center justify-center px-4 py-2">
     <!-- NFT Setup Form HTML Structure https://flowbite.com/docs/forms/textarea/ -->
 
-    <!-- Collection Picker using Popover Component -->
-    <Popover.Root bind:open={collectionPickerOpen} let:ids>
-        <Popover.Trigger asChild let:builder>
-            <Button
-                builders={[builder]}
-                variant="outline"
-                role="combobox"
-                aria-expanded={collectionPickerOpen}
-                class="w-[200px] justify-between"
-            >
-                {$selectedCollection || "Select a collection"}
-                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-        </Popover.Trigger>
-        <Popover.Content class="w-[200px] p-0">
-            <Command.Root>
-                <Command.Input placeholder="Search collection..." />
-                <Command.Empty>No collections found.</Command.Empty>
-                <Command.Group>
-                    {#each collections as collection}
-                        <Command.Item
-                            value={collection}
-                            onSelect={() => {
-                                selectedCollection.set(collection);
-                                // Close the popover and refocus if needed
-                                collectionPickerOpen = false;
-                            }}
-                        >
-                            <Check class={cn("mr-2 h-4 w-4", get(selectedCollection) !== collection && "text-transparent")} />
-                            <span class="font-saira">{collection}</span>
-                        </Command.Item>
-                    {/each}
-                </Command.Group>
-            </Command.Root>
-        </Popover.Content>
-    </Popover.Root>
+    <img src="/images/cxcmusicnfts-spinning-logo.gif" alt="cXc Logo" class="h-auto max-w-full" />
 
-    <div
-        class="m-4 block rounded-lg bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-    >
-        <Input type="text" bind:value={schemaName} placeholder="Name your new Schema aka Category" />
+    <div class="m-4 flex flex-col gap-2">
+        <button 
+            class="cursor-pointer text-lg font-semibold text-gray-800 hover:text-gray-600 focus:outline-none focus:ring focus:ring-gray-300 rounded"
+            aria-expanded={$isInstructionsOpen}
+            on:click={() => isInstructionsOpen.update(n => !n)}
+        >
+            <h2 class="text-white">Instructions</h2>
+        </button>
+        {#if $isInstructionsOpen}
+            <div class="mt-2 p-4rounded-md bg-gray-100 text-gray-700">
+                <p>1. Select an existing collection, or <a href="https://atomichub.io/creator/create-collection">make one</a></p>
+                <p>2. Name your new schema, sometimes called category (up to 12 lower-case letters + numbers 1-5)</p>
+                <p>3. Pick a Media Standard + Version (<a href="https://standards.cXc.world">more info</a>)</p>
+                <p>4. Uncheck unneeded fields + rename fields if desired</p>
+                <p>5. Click Create Schema and Send it!</p>
+            </div>
+        {/if}
     </div>
 
-    <div class="flex flex-col gap-2">
-        <select
-            class="m-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            bind:value={selectedStandard}
-            on:change={() => loadFieldsForStandard(selectedStandard, selectedVariation)}
-        >
-            <option value="">Select a Standard</option>
-            <option value="literature">Literature</option>
-            <option value="music">Music</option>
-            <option value="video">Video</option>
-            <option value="photo">Photo</option>
-            <option value="image">Image</option>
-        </select>
-        <select
-            class="m-2 block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-            bind:value={selectedVariation}
-            on:change={() => loadFieldsForStandard(selectedStandard, selectedVariation)}
-        >
-            <option value="">Select a Variation</option>
-            <option value="web4">Web4</option>
-            <option value="light">Light</option>
-        </select>
+    <!-- Collection Picker using Popover Component -->
+    <div class="m-4 flex flex-col gap-2">
+        <Popover.Root bind:open={collectionPickerOpen} let:ids>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={collectionPickerOpen}
+                    class="w-[200px] justify-between"
+                >
+                    {$selectedCollection || "Select a collection"}
+                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </Popover.Trigger>
+            <Popover.Content class="w-[200px] p-0">
+                <Command.Root>
+                    <Command.Input placeholder="Search collection..." />
+                    <Command.Empty>No collections found.</Command.Empty>
+                    <Command.Group>
+                        {#each collections as collection}
+                            <Command.Item
+                                value={collection}
+                                onSelect={() => {
+                                    selectedCollection.set(collection);
+                                    // Close the popover and refocus if needed
+                                    collectionPickerOpen = false;
+                                }}
+                            >
+                                <Check class={cn("mr-2 h-4 w-4", get(selectedCollection) !== collection && "text-transparent")} />
+                                <span class="font-saira">{collection}</span>
+                            </Command.Item>
+                        {/each}
+                    </Command.Group>
+                </Command.Root>
+            </Popover.Content>
+        </Popover.Root>
+    </div>
+
+    <div class="m-4 flex flex-col gap-2">
+        <Input type="text" bind:value={schemaName} placeholder="Name your new Schema aka Category" />
+    </div>
+    <div class="m-4 flex flex-col gap-2">
+        <Popover.Root bind:open={standardPickerOpen} let:ids>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={standardPickerOpen}
+                    class="w-[200px] justify-between"
+                >
+                    {selectedStandard || "Select a Standard"}
+                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </Popover.Trigger>
+            <Popover.Content class="w-[200px] p-0">
+                <Command.Root>
+                    <Command.Input placeholder="Search Standard..." />
+                    <Command.Empty>No standards found.</Command.Empty>
+                    <Command.Group>
+                        {#each standards as standard}
+                            <Command.Item
+                                value={standard}
+                                onSelect={() => {
+                                    selectedStandard = standard;
+                                    standardPickerOpen = false;
+                                }}
+                            >
+                                <span class="font-saira">{standard}</span>
+                            </Command.Item>
+                        {/each}
+                    </Command.Group>
+                </Command.Root>
+            </Popover.Content>
+        </Popover.Root>
+    </div>
+
+    <div class="m-4 flex flex-col gap-2">
+        <Popover.Root bind:open={variationPickerOpen} let:ids>
+            <Popover.Trigger asChild let:builder>
+                <Button
+                    builders={[builder]}
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={variationPickerOpen}
+                    class="w-[200px] justify-between"
+                >
+                    {selectedVariation || "Select a Variation"}
+                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </Popover.Trigger>
+            <Popover.Content class="w-[200px] p-0">
+                <Command.Root>
+                    <Command.Input placeholder="Search Variation..." />
+                    <Command.Empty>No variations found.</Command.Empty>
+                    <Command.Group>
+                        {#each variations as variation}
+                            <Command.Item
+                                value={variation}
+                                onSelect={() => {
+                                    selectedVariation = variation;
+                                    variationPickerOpen = false;
+                                }}
+                            >
+                                <span class="font-saira">{variation}</span>
+                            </Command.Item>
+                        {/each}
+                    </Command.Group>
+                </Command.Root>
+            </Popover.Content>
+        </Popover.Root>
     </div>
 
     <div class="m-4 flex flex-col gap-2">
