@@ -4,11 +4,11 @@
 
 These tools integrates with our [media NFT standards](https://standards.cXc.world) for Atomic Assets.
 
-> These are web4 standards, meaning they keep spacetime data. 
+> These standards keep spacetime data, which we call web 4. 
 
 # Live Tools 🛠
 
-## Web4 Category/Schema Creator (pending release on [tools.cXc.world](https://tools.cXc.world/nft/schema))
+## Media Category/Schema Creator ⚡️ Live on [tools.cXc.world](https://tools.cXc.world))
 We make it easier to get started with a well structured NFT collection. 
 
 Load + customize fields based on our [media NFT standards](https://standards.cXc.world)
