@@ -26,4 +26,8 @@ Check back to see what we've got planned..
 ## Thanks 🙏
 Based on open source UI from [benjiewheeler](https://github.com/benjiewheeler) using [atomicassets](https://github.com/pinknetworkx/atomicassets-js) on [WAX](https://wax.io) using [Wharfkit](https://wharfkit.com/) with support from [WAX Labs](https://labs.wax.io/proposals/84) 
 
-<center>**Created with 💜 by [cXc](https://linktr.ee/cXc.world)**</center>
+<center>
+
+Created with 💜 by [cXc](https://linktr.ee/cXc.world)
+
+</center>

@@ -8,6 +8,7 @@
     import { Check, ChevronsUpDown } from "lucide-svelte";
     import * as Popover from "$lib/components/ui/popover";
     import * as Command from "$lib/components/ui/command";
+    import * as AlertDialog from "$lib/components/ui/alert-dialog";
 
     import { balances, session, transact, selectedCollection } from "$lib/store";
     import { APIClient, Asset, KeyType, PrivateKey } from "@wharfkit/session";
@@ -18,7 +19,7 @@
     let standardPickerOpen = false;
     let variationPickerOpen = false;
     const standards = ["literature", "music", "video", "photo", "image"];
-    const variations = ["web4", "light"];
+    const variations = ["spacetime", "light"];
     let selectedStandard = "";
     let selectedVariation = "";
     let fieldList = [];
@@ -28,11 +29,16 @@
     let collectionPickerOpen = false;
     let collections = []; // Array to store fetched collection names
 
+    export let alertOpen = false;
+    export let alertMessage = '';
+
     session.subscribe(async session => {
         if (session) {
             fetchCollections();
         }
     });
+
+    
 
     $: if (selectedStandard && selectedVariation) {
         loadFieldsForStandard(selectedStandard, selectedVariation);
@@ -113,14 +119,37 @@
 
         transact([makeSchemaTx], { broadcast: true }).then(result => {
             if (result.resolved) {
-                transactionResult = `Transaction broadcast! ${result.resolved.transaction.id}\n`;
+                alertMessage = `Your ready to mint!   <span class="text-xs"><a href="https://waxblock.io/transaction/${result.resolved.transaction.id}">view tx</a><span>\n`;
+                alertOpen = true;
+                console.log(result);
+                
             }
         });
-    }
+    }//END createSchema()
+
 </script>
 
 <section class="flex flex-col items-center justify-center px-4 py-2">
     <!-- NFT Setup Form HTML Structure https://flowbite.com/docs/forms/textarea/ -->
+
+    <AlertDialog.Root bind:open={alertOpen}>
+        <AlertDialog.Content>
+            <AlertDialog.Header>
+                <AlertDialog.Title>Transaction was Sendy</AlertDialog.Title>
+                <AlertDialog.Description>
+                    <div class="flex flex-col gap-2">
+                        <p class="rounded bg-green-700 p-2 text-center font-saira font-semibold text-white">{@html alertMessage}</p>
+                    </div>
+                    Next: <a href="https://wax.atomichub.io/creator/collection/wax-mainnet/{ get(selectedCollection) }">Add a template + mint!</a> 
+
+
+                </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+                <AlertDialog.Action bind:close={alertOpen}>Done</AlertDialog.Action>
+            </AlertDialog.Footer>
+        </AlertDialog.Content>
+    </AlertDialog.Root>
 
     <img src="/images/cxcmusicnfts-spinning-logo.gif" alt="cXc Logo" class="h-auto max-w-full" />
 
