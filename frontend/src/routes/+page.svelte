@@ -34,19 +34,39 @@
     </p>
 
     {#if $session}
-        <p class="font-saira text-center font-medium sm:text-lg lg:text-xl">Login to access the tools</p>
+        <p class="font-saira text-center font-medium sm:text-lg lg:text-xl">You now can access the tools</p>
     {:else}
-        <p class="font-saira text-center font-medium sm:text-lg lg:text-xl">Click below to access the tools</p>
+        <p class="font-saira text-center font-medium sm:text-lg lg:text-xl">Login to access the tools</p>
     {/if}
 
-    <div class="mt-16 flex flex-row gap-4">
+    <div class="mt-16 flex flex-col gap-4 justify-items-center items-center">
         {#if $session}
-            <Button href="/nft/setup" title="Create a new Schema (aka Category) for an existing Atomic Assets collection" variant="primary">
-                Create your Media NFT Category
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button class="bg-yellow-500" href="/nft/setup" title="Create a new Schema (aka Category) for an existing Atomic Assets collection" variant="primary">
+                Launch your Media NFT Category
             </Button>
             <Button href="https://standards.cxc.world" target="_blank" title="Metadata standards for Music, Video, Photo, Literature and Image">
-                Learn about the standards
+                Learn about our NFT standards
             </Button>
+        </div>
+
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button class="bg-green-500" href="https://docs.cxc.world/loot" target="_blank" title="Learn about Loot 💰 NFT Staking smart contract. Earn for your NFTs + earn more with friends">
+                Loot 💰 Jucier NFT Staking 
+            </Button>
+            <Button class="flex row inline-flex"href="https://github.com/currentxchange/loot" target="_blank" title=" Deploy Loot 💰 NFT Staking smart contract. Earn for your NFTs + earn more with friends">
+                Launch your NFT staking 🛠 Set up Loot
+            </Button>
+
+        </div>
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+
+            <Button href="https://github.com/currentxchange/ups" target="_blank" title="Ups 🔺 Localized Reddit-like curation smart contract by cXc and Tetra for WAX + Antelope blockchains">
+                Ups 🌎🔺 Localized curation contract for NFTs + Web4
+            </Button>
+        </div>
+
+
         {:else}
             <Button on:click={login} variant="outline">Login</Button>
         {/if}
