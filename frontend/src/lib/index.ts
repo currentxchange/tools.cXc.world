@@ -5,7 +5,7 @@ import { contractName } from "./contract";
 
 // the url for the wax api
 // must also be a hyperion endpoint
-export const API_NODE_URL = "https://wax.eosusa.io";
+export const API_NODE_URL = "https://apiwax.3dkrender.com";
 
 const contractKit = new ContractKit(
     {
