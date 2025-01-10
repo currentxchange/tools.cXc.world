@@ -66,6 +66,17 @@
             </Button>
         </div>
 
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button href="https://www.youtube.com" target="_blank" title="Watch YouTube videos about NFT standards">
+                Watch NFT Standards Videos
+            </Button>
+        </div>
+
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button href="/stake" title="Stake PURPLE">
+                Staking
+            </Button>
+        </div>
 
         {:else}
             <Button on:click={login} variant="outline">Login</Button>

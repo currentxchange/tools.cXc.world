@@ -1,0 +1,215 @@
+name: tools.cXc.world
+root: frontend/
+description: Web4 NFT tools for WAX blockchain using SvelteKit and Wharfkit
+
+You are using Sveltekit, and always use the Sveltekit components and patterns.
+
+You always look at the conde in @nft/setup/+page.svelte to understand the correct way to code. 
+
+# Core blockchain interaction patterns
+blockchain_patterns:
+  - name: WAX Session Management
+    files: src/lib/store.ts
+    context:
+      - "@wharfkit/session"
+      - "@wharfkit/contract"
+    related_patterns:
+      - "session.subscribe"
+      - "transact\\("
+      - "permissionLevel"
+
+  - name: Atomic Assets Integration
+    files: "**/*.svelte"
+    context:
+      - "atomicassets"
+      - "ExplorerApi"
+      - "RpcApi"
+    related_files:
+      - src/lib/store.ts
+
+# Standard file patterns
+patterns:
+  - name: NFT Setup Pages
+    files: src/routes/nft/**/*.svelte
+    context:
+      - src/lib/store.ts
+      - "@wharfkit/session"
+      - "atomicassets"
+    blockchain_actions:
+      - "createschema"
+      - "getCollections"
+
+  - name: UI Components
+    files: src/lib/components/ui/**/*
+    context:
+      - src/app.pcss
+      - tailwind.config.js
+
+# Blockchain specific directories
+directories:
+  src/lib/blockchain:
+    description: Blockchain interaction utilities
+    related_files:
+      - package.json
+    dependencies:
+      - "@wharfkit/session"
+      - "@wharfkit/contract"
+      - "atomicassets"
+
+  src/routes/nft:
+    description: NFT management pages
+    related_files:
+      - src/lib/store.ts
+    blockchain_context:
+      - "ExplorerApi"
+      - "createschema"
+
+# Key blockchain configuration
+key_files:
+  "src/lib/store.ts":
+    description: Wharfkit session and blockchain state management
+    context:
+      - package.json
+      - src/routes/nft/setup/+page.svelte
+
+# Transaction patterns to recognize
+transaction_patterns:
+  - name: Schema Creation
+    pattern: |
+      {
+        account: "atomicassets",
+        name: "createschema",
+        authorization: [$session.permissionLevel],
+        data: schemaData
+      }
+
+  - name: Collection Fetching
+    pattern: |
+      const explorerApi = new ExplorerApi("https://atomic-wax.tacocrypto.io", "atomicassets", { fetch });
+      const collections = await explorerApi.getCollections({ author: $session.actor });
+
+# Define blockchain dependencies that should be considered together
+dependency_groups:
+  wharfkit:
+    - "@wharfkit/session"
+    - "@wharfkit/contract"
+    - "@wharfkit/transact-plugin-autocorrect"
+    - "@wharfkit/wallet-plugin-anchor"
+    - "@wharfkit/wallet-plugin-cloudwallet"
+    - "@wharfkit/wallet-plugin-wombat"
+    - "@wharfkit/web-renderer"
+
+  atomic_assets:
+    - "atomicassets"
+
+# Define search patterns for blockchain features
+features:
+  schema_creation:
+    search_patterns:
+      - "createschema"
+      - "atomicassets"
+      - "schema_format"
+    transaction_context:
+      - "authorization"
+      - "permissionLevel"
+      - "transact"
+    related_files:
+      - src/routes/nft/setup/+page.svelte
+      - src/lib/store.ts
+
+# UI Framework patterns
+ui_patterns:
+  - name: SvelteKit Pages
+    files: src/routes/**/*.svelte
+    context:
+      - src/app.pcss
+      - src/lib/components/ui/**/*
+
+  - name: shadcn-svelte Components
+    files: src/lib/components/ui/**/*
+    context:
+      - tailwind.config.js
+      - components.json
+
+# Style configuration
+style_config:
+  tailwind:
+    config_file: tailwind.config.js
+    css_file: src/app.pcss
+    related_files:
+      - components.json
+      - .prettierrc
+
+# Development tooling
+dev_tools:
+  prettier:
+    config_file: .prettierrc
+    plugins:
+      - prettier-plugin-svelte
+      - prettier-plugin-tailwindcss
+
+  typescript:
+    config_file: tsconfig.json
+    compiler_options:
+      - strict
+      - moduleResolution
+      - experimentalDecorators
+
+
+
+
+
+      Initial Structure (Additional files may exist)
+
+
+      /
+├── LICENSE
+├── README.md
+├── .gitignore
+├── contract/
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── .prettierrc
+│   ├── contract/
+│   │   ├── include/
+│   │   │   └── gift_star.hpp
+│   │   └── src/
+│   │       └── gift_star.cpp
+│   └── tests/
+│       ├── announce.spec.ts
+│       ├── claim.spec.ts
+│       ├── cancel.spec.ts
+│       ├── init.spec.ts
+│       ├── transfer.spec.ts
+│       └── util.ts
+├── frontend/
+│   ├── README.md
+│   ├── .gitignore
+│   ├── .prettierrc
+│   ├── .prettierignore
+│   ├── .npmrc
+│   ├── package.json
+│   ├── tsconfig.json
+│   ├── svelte.config.js
+│   ├── vite.config.ts
+│   ├── postcss.config.cjs
+│   ├── tailwind.config.js
+│   ├── components.json
+│   └── src/
+│       ├── app.html
+│       ├── app.pcss
+│       ├── app.d.ts
+│       ├── lib/
+│       │   ├── components/ui/
+│       │   │   ├── alert-dialog/
+│       │   │   ├── command/
+│       │   │   ├── dialog/
+│       │   │   ├── label/
+│       │   │   ├── popover/
+│       │   │   └── skeleton/
+│       │   └── contract.ts
+│       └── routes/
+│           ├── +layout.svelte
+│           ├── +layout.ts
+│           ├── +page.svelte
+│           └── nft/setup/+page.svelte

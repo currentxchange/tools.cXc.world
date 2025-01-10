@@ -6,7 +6,7 @@ import { getTableRows } from "./util";
 const blockchain = new Blockchain();
 
 const [alice, bob] = blockchain.createAccounts("alice", "bob");
-const giftStarContract = blockchain.createContract("gift.star", "contract/gift_star", true);
+const giftStarContract = blockchain.createContract("purplepurple", "contract/purplepurple", true);
 const eosioTokenContract = blockchain.createContract("eosio.token", "node_modules/proton-tsc/external/eosio.token/eosio.token", true);
 
 describe("notification", () => {
@@ -19,7 +19,7 @@ describe("notification", () => {
         await mintTokens(eosioTokenContract, "EOS", 4, 1e9, 1e3, [alice, bob]);
 
         // initialize the smart contract
-        await giftStarContract.actions.init({}).send("gift.star@active");
+        await giftStarContract.actions.init({}).send("purplepurple@active");
 
         // create a test link
         await giftStarContract.actions
@@ -35,7 +35,7 @@ describe("notification", () => {
     test("reject invalid memo", () => {
         expect(() =>
             eosioTokenContract.actions
-                .transfer({ from: "alice", to: "gift.star", quantity: "1.00000000 WAX", memo: "Enjoy :)" })
+                .transfer({ from: "alice", to: "purplepurple", quantity: "1.00000000 WAX", memo: "Enjoy :)" })
                 .send("alice@active")
         ).toThrow(Error("eosio_assert: Invalid memo"));
     });
@@ -43,31 +43,31 @@ describe("notification", () => {
     test("reject insufficient quantity", () => {
         expect(() =>
             eosioTokenContract.actions
-                .transfer({ from: "alice", to: "gift.star", quantity: "0.10000000 WAX", memo: "link" })
+                .transfer({ from: "alice", to: "purplepurple", quantity: "0.10000000 WAX", memo: "link" })
                 .send("alice@active")
         ).toThrow(Error("eosio_assert: Insufficient quantity"));
     });
 
     test("reject non-existing link (creator)", () => {
         expect(() =>
-            eosioTokenContract.actions.transfer({ from: "bob", to: "gift.star", quantity: "1.00000000 WAX", memo: "link" }).send("bob@active")
+            eosioTokenContract.actions.transfer({ from: "bob", to: "purplepurple", quantity: "1.00000000 WAX", memo: "link" }).send("bob@active")
         ).toThrow(Error("eosio_assert: No announced link by this sender for this token exists"));
     });
 
     test("reject non-existing link (token)", () => {
         expect(() =>
-            eosioTokenContract.actions.transfer({ from: "bob", to: "gift.star", quantity: "1.0000 EOS", memo: "link" }).send("bob@active")
+            eosioTokenContract.actions.transfer({ from: "bob", to: "purplepurple", quantity: "1.0000 EOS", memo: "link" }).send("bob@active")
         ).toThrow(Error("eosio_assert: No announced link by this sender for this token exists"));
     });
 
     test("fund link", async () => {
         expect(
             eosioTokenContract.actions
-                .transfer({ from: "alice", to: "gift.star", quantity: "10.00000000 WAX", memo: "link" })
+                .transfer({ from: "alice", to: "purplepurple", quantity: "10.00000000 WAX", memo: "link" })
                 .send("alice@active")
         ).resolves.toBeNil();
 
-        expect(getTableRows(blockchain, "gift.star", "links")).toEqual([
+        expect(getTableRows(blockchain, "purplepurple", "links")).toEqual([
             {
                 payer: "alice",
                 primaryKey: 1n,
