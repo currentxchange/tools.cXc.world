@@ -313,7 +313,7 @@
                     <span class="text-white font-saira">Level Info</span>
                     <div class="text-right">
                         <span class="text-purple-400 font-saira font-bold">Level {$currentLevel}</span>
-                        <span class="text-gray-400 font-saira text-sm ml-2">({$currentBonus}% APR)</span>
+                        <span class="text-gray-400 font-saira text-sm ml-2">({$currentBonus}% BPD)</span>
                     </div>
                 </div>
                 <div class="flex justify-between items-center">
