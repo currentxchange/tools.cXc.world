@@ -251,7 +251,7 @@
     }
 
     $: canStake = $session && Number($stakeAmount) > 0;
-    $: canUnstake = $session && Number($unstakeAmount) > 0 && Number($unstakeAmount) <= $purpleStaked;
+    $: canUnstake = $session && Number($unstakeAmount) > 0 && Number($unstakeAmount) <= parseFloat($purpleStaked);
     $: canClaim = $session && parseFloat($pendingReward) > 0;
 </script>
 
