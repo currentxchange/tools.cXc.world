@@ -154,13 +154,13 @@
                 // Total reward = (daily reward * days passed) + level bonus
                 const total_reward = (daily_reward * days_passed) + level_bonus;
                 
-                pendingReward.set(`${total_reward.toFixed(4)} BLUX`);
+                pendingReward.set(`${total_reward.toFixed(0)} BLUX`);
             } else {
-                pendingReward.set("0.0000 BLUX");
+                pendingReward.set("0 BLUX");
             }
         } catch (e) {
             console.error("Error calculating pending reward:", e);
-            pendingReward.set("0.0000 BLUX");
+            pendingReward.set("0 BLUX");
         }
     }
 
@@ -169,7 +169,8 @@
     const TRIANGULAR = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406];
 
     function calculateLevelInfo(stakedAmount: number) {
-        const amount = Math.floor(stakedAmount);
+        // Use the exact staked amount
+        const amount = stakedAmount;
         let level = 0;
         
         // Find current level
