@@ -24,18 +24,28 @@
         if (!$session?.actor) return;
         
         const api = new APIClient({
-            url: "http://apiwax.3dkrender.com"
+            url: "https://wax.greymass.com"
         });
 
         try {
-            const response = await api.v1.chain.get_currency_balance({
+            const response = await api.v1.chain.get_table_rows({
                 code: "purplepurple",
-                account: $session.actor,
-                symbol: "PURPLE"
+                scope: $session.actor,
+                table: "accounts",
+                limit: 1,
+                index_position: 1,
+                key_type: "i64",
+                json: true
             });
-            purpleBalance.set(response[0] || "0.00000000 PURPLE");
+
+            if (response.rows.length > 0) {
+                purpleBalance.set(response.rows[0].balance);
+            } else {
+                purpleBalance.set("0.00000000 PURPLE");
+            }
         } catch (e) {
             console.error("Error fetching PURPLE balance:", e);
+            purpleBalance.set("0.00000000 PURPLE");
         }
     }
 
@@ -46,7 +56,7 @@
         await Promise.all([
             (async () => {
                 const api = new APIClient({
-                    url: "http://apiwax.3dkrender.com"
+                    url: "https://wax.greymass.com"
                 });
 
                 try {
@@ -96,7 +106,7 @@
         if (!$session?.actor) return;
         
         const api = new APIClient({
-            url: "http://apiwax.3dkrender.com"
+            url: "https://wax.greymass.com"
         });
 
         try {
