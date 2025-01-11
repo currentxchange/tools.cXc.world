@@ -42,6 +42,12 @@
     <div class="mt-16 flex flex-col gap-4 justify-items-center items-center">
         {#if $session}
         <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button class="bg-purple-500 flex items-center" href="/stake" title="Stake PURPLE">
+                
+                NEW! <img src="/purple-hive-bot.png" alt="Purple Hive Bot" class="w-auto h-6" />PURPLE Staking
+            </Button>
+        </div>
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
             <Button class="bg-yellow-500" href="/nft/setup" title="Create a new Schema (aka Category) for an existing Atomic Assets collection" variant="primary">
                 Launch your Media NFT Category
             </Button>
@@ -67,16 +73,12 @@
         </div>
 
         <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
-            <Button href="https://www.youtube.com" target="_blank" title="Watch YouTube videos about NFT standards">
-                Watch NFT Standards Videos
+            <Button href="https://www.youtube.com/watch?v=0jLRFa8Ol5Y&list=PLrr_9HPPROSf-OLfNfDmxTOsdhakJJPhQ" target="_blank" title="Watch YouTube videos about NFT standards">
+                Watch NFT Standards Tutorials
             </Button>
         </div>
 
-        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
-            <Button href="/stake" title="Stake PURPLE">
-                Staking
-            </Button>
-        </div>
+
 
         {:else}
             <Button on:click={login} variant="outline">Login</Button>
