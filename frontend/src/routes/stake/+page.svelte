@@ -18,6 +18,9 @@
     let pendingReward = writable("0 BLUX");
     let stakeAmount = writable("");
     let unstakeAmount = writable("");
+    let currentLevel = writable(0);
+    let currentBonus = writable(0);
+    let nextLevelAmount = writable("0.00000000 PURPLE");
 
     // Function to fetch PURPLE balance
     async function fetchPurpleBalance() {
@@ -72,8 +75,10 @@
 
                     if (response.rows.length > 0) {
                         purpleStaked.set(response.rows[0].staked_amount);
+                        calculateLevelInfo(parseFloat(response.rows[0].staked_amount));
                     } else {
                         purpleStaked.set("0.00000000 PURPLE");
+                        calculateLevelInfo(0);
                     }
                 } catch (e) {
                     console.error("Error fetching staked amount:", e);
@@ -162,6 +167,31 @@
     // Add the TETRAHEDRAL and TRIANGULAR series from the smart contract
     const TETRAHEDRAL = [1, 4, 10, 20, 35, 56, 84, 120, 165, 220, 286, 364, 455, 560, 680, 816, 969, 1140, 1330, 1540, 1771, 2024, 2300, 2600, 2925, 3276, 3654, 4060, 4505, 4990, 5516, 6084, 6725, 7440, 8230, 9096, 99999999999];
     const TRIANGULAR = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406];
+
+    function calculateLevelInfo(stakedAmount: number) {
+        const amount = Math.floor(stakedAmount);
+        let level = 0;
+        
+        // Find current level
+        for (let i = 0; i < TETRAHEDRAL.length; i++) {
+            if (amount < TETRAHEDRAL[i]) {
+                level = i;
+                break;
+            }
+        }
+        
+        // Calculate bonus percentage (100 + level)
+        const bonus = 100 + level;
+        
+        // Calculate amount needed for next level
+        const nextRequired = level < TETRAHEDRAL.length - 1 
+            ? `${(TETRAHEDRAL[level] - amount).toFixed(8)} PURPLE`
+            : "MAX LEVEL";
+
+        currentLevel.set(level);
+        currentBonus.set(bonus);
+        nextLevelAmount.set(nextRequired);
+    }
 
     async function handleStake() {
         if (!$session) return;
@@ -278,6 +308,17 @@
     <div class="m-4 flex flex-col gap-2 w-full max-w-md">
         <div class="rounded-lg bg-gray-800 p-4">
             <div class="flex flex-col gap-4 mb-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-white font-saira">Level Info</span>
+                    <div class="text-right">
+                        <span class="text-purple-400 font-saira font-bold">Level {$currentLevel}</span>
+                        <span class="text-gray-400 font-saira text-sm ml-2">({$currentBonus}% APR)</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="text-white font-saira">Next Level In</span>
+                    <span class="text-purple-400 font-saira font-bold text-right">{$nextLevelAmount}</span>
+                </div>
                 <div class="flex justify-between items-center">
                     <span class="text-white font-saira">Purple Staked</span>
                     <span class="text-purple-400 font-saira font-bold text-right">{$purpleStaked}</span>
