@@ -163,8 +163,11 @@
     const TETRAHEDRAL = [1, 4, 10, 20, 35, 56, 84, 120, 165, 220, 286, 364, 455, 560, 680, 816, 969, 1140, 1330, 1540, 1771, 2024, 2300, 2600, 2925, 3276, 3654, 4060, 4505, 4990, 5516, 6084, 6725, 7440, 8230, 9096, 99999999999];
     const TRIANGULAR = [1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171, 190, 210, 231, 253, 276, 300, 325, 351, 378, 406];
 
-    async function handleStake(amount) {
+    async function handleStake() {
         if (!$session) return;
+        
+        const amount = parseFloat($stakeAmount);
+        if (isNaN(amount)) return;
         
         const stakeTx = {
             account: "purplepurple",
@@ -187,8 +190,11 @@
         });
     }
 
-    async function handleUnstake(amount) {
+    async function handleUnstake() {
         if (!$session) return;
+        
+        const amount = parseFloat($unstakeAmount);
+        if (isNaN(amount)) return;
 
         const unstakeTx = {
             account: "stake.cxc",
@@ -231,13 +237,17 @@
     }
 
     function setMaxStake() {
-        // TODO: Implement max stake logic based on wallet balance
-        stakeAmount.set("100");
+        if (!$purpleBalance) return;
+        // Extract the numerical value from the balance string (e.g., "10.00000000 PURPLE" -> 10)
+        const maxAmount = parseFloat($purpleBalance);
+        stakeAmount.set(maxAmount.toString());
     }
 
     function setMaxUnstake() {
-        // TODO: Implement max unstake logic based on staked amount
-        unstakeAmount.set($purpleStaked.toString());
+        if (!$purpleStaked) return;
+        // Extract the numerical value from the staked amount string
+        const maxAmount = parseFloat($purpleStaked);
+        unstakeAmount.set(maxAmount.toString());
     }
 
     $: canStake = $session && Number($stakeAmount) > 0;
