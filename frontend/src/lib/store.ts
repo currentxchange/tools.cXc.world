@@ -10,6 +10,7 @@ import { get, writable } from "svelte/store";
 export const balances = writable<LightAPI.TokenBalance[]>([]);
 export const session = writable<Session | undefined>(undefined);
 export const selectedCollection = writable("");
+export const tonomySession = writable<any | undefined>(undefined);
 
 
 const sessionKit = new SessionKit(
@@ -24,17 +25,34 @@ const sessionKit = new SessionKit(
     }
 );
 
+// Tonomy configuration for SSO login
+const tonomyConfig = {
+    ssoWebsiteOrigin: 'https://accounts.testnet.pangea.web4.world',
+    returnUrl: window.location.origin + '/invitono'
+};
+
 export async function login() {
     const response = await sessionKit.login();
     session.set(response.session);
 }
 
+export async function loginWithTonomy() {
+    // Redirect to Tonomy Accounts website for SSO login
+    const loginUrl = `${tonomyConfig.ssoWebsiteOrigin}/login?returnUrl=${encodeURIComponent(tonomyConfig.returnUrl)}`;
+    window.location.href = loginUrl;
+}
+
 export async function logout() {
     const current = get(session);
+    const tonomyCurrent = get(tonomySession);
 
-    if (session) {
+    if (current) {
         await sessionKit.logout(current);
         session.set(undefined);
+    }
+    if (tonomyCurrent) {
+        // For now, just clear the session
+        tonomySession.set(undefined);
     }
 
     goto("/");

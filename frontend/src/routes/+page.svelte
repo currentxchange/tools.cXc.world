@@ -1,16 +1,16 @@
 <script lang="ts">
     import { Button } from "$lib/components/ui/button";
-    import { login, session } from "$lib/store";
+    import { session, login, logout, loginWithTonomy } from "$lib/store";
     import { onMount } from 'svelte';
 
     onMount(async () => {
         colorizeHeaderText('.elegantshadowwht');
     });
 
-    function colorizeHeaderText(selector) {
+    function colorizeHeaderText(selector: string) {
     const header = document.querySelector(selector);
     if (!header) return;
-    const text = header.innerText;
+    const text = (header as HTMLElement).textContent || '';
     let coloredText = "";
     const colors = ["MediumOrchid", "VIOLET", "DEEPPINK", "AQUA", "LIGHTSKYBLUE", "CYAN", "DEEPSKYBLUE", "DodgerBlue", "MEDIUMSLATEBLUE", "YELLOWGREEN", "CornflowerBlue", "PALETURQUOISE", "lightSKYBLUE", "MEDIUMseaGREEN", "FORESTGREEN", "AQUAMARINE", "CORNSILK", "GOLDENROD", "GOLD", "ORANGE", "DARKORANGE", "ORANGERED", "CRIMSON", "RED", "SALMON", "PLUM", "LIGHTSALMON", "GAINSBORO", "SILVER", "TOMATO", "SEAGREEN", "SpringGreen", "GOLDENROD", "LIGHTCYAN", "LAVENDER", "FORESTGREEN", "LIGHTYELLOW", "INDIANRED", "TEAL", "PERU"];
 
@@ -24,6 +24,10 @@
     header.innerHTML = coloredText;
 }
 
+    // Dark mode toggle
+    function toggleDarkMode() {
+        document.documentElement.classList.toggle("dark");
+    }
 </script>
 
 <section class="flex flex-col items-center justify-center px-4">
@@ -42,13 +46,17 @@
     <div class="mt-16 flex flex-col gap-4 justify-items-center items-center">
         {#if $session}
         <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
+            <Button class="bg-blue-500 flex items-center w-full justify-center" href="/invitono" title="Join Tonomy">
+                NEW! Tonomy Invite System
+            </Button>
+        </div>
+        <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
             <Button class="bg-purple-500 flex items-center" href="/stake" title="Stake PURPLE">
-                
                 NEW! <img src="/purple-hive-bot.png" alt="Purple Hive Bot" class="w-auto h-6" />PURPLE Staking
             </Button>
         </div>
         <div class="m-4 flex flex-row max-w-full gap-4 justify-between">
-            <Button class="bg-yellow-500" href="/nft/setup" title="Create a new Schema (aka Category) for an existing Atomic Assets collection" variant="primary">
+            <Button class="bg-yellow-500" href="/nft/setup" title="Create a new Schema (aka Category) for an existing Atomic Assets collection" variant="default">
                 Launch your Media NFT Category
             </Button>
             <Button href="https://standards.cxc.world" target="_blank" title="Metadata standards for Music, Video, Photo, Literature and Image">
@@ -82,6 +90,7 @@
 
         {:else}
             <Button on:click={login} variant="outline">Login</Button>
+            <Button on:click={loginWithTonomy} variant="secondary" class="bg-blue-500 text-white">Login with Tonomy</Button>
         {/if}
     </div>
 </section>
