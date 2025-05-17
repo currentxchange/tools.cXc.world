@@ -44,12 +44,12 @@
     });
 
     function handleLogin() {
-        // Updated redirect URL for Tonomy login with correct testnet domain and callback
+        // Updated redirect URL for Tonomy login to match demo app structure
         const callbackUrl = encodeURIComponent(window.location.origin + '/invitono');
         const appId = 'cxc'; // Application identifier as provided
-        const redirectUrl = 'https://accounts.testnet.tonomy.io?redirect_uri=' + callbackUrl + '&app_id=' + appId + '&scope=login';
+        const redirectUrl = 'https://accounts.testnet.tonomy.io/login?redirect_uri=' + callbackUrl + '&app_id=' + appId + '&scope=login';
         console.log('Redirecting to Tonomy SSO with URL:', redirectUrl);
-        window.location.href = redirectUrl; // Added app_id and scope for context
+        window.location.href = redirectUrl;
     }
 
     function handleLogout() {
