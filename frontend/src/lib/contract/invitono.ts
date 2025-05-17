@@ -1,8 +1,8 @@
 import { APIClient, Name } from "@wharfkit/session";
 import { writable } from "svelte/store";
 
-const CONTRACT_ACCOUNT = "tono.cxc";
-const API_URL = "https://wax.greymass.com";
+const TONOMY_CONTRACT_ACCOUNT = "invite.cxc";
+const TONOMY_API_URL = "https://blockchain-api-testnet.tonomy.io";
 
 // Store for user's invite data
 export const inviteData = writable<{
@@ -30,15 +30,15 @@ export const contractConfig = writable<{
     rewardRate: number;
 } | null>(null);
 
-// Initialize API client
-const api = new APIClient({ url: API_URL });
+// Initialize API client for Tonomy testnet
+const tonomyApi = new APIClient({ url: TONOMY_API_URL });
 
 // Fetch user's invite data
 export async function fetchInviteData(account: string) {
     try {
-        const response = await api.v1.chain.get_table_rows({
-            code: CONTRACT_ACCOUNT,
-            scope: CONTRACT_ACCOUNT,
+        const response = await tonomyApi.v1.chain.get_table_rows({
+            code: TONOMY_CONTRACT_ACCOUNT,
+            scope: TONOMY_CONTRACT_ACCOUNT,
             table: "adopters",
             lower_bound: Name.from(account),
             upper_bound: Name.from(account),
@@ -57,16 +57,16 @@ export async function fetchInviteData(account: string) {
         }
     } catch (e) {
         console.error("Error fetching invite data:", e);
-        inviteData.set(null);
+        inviteData.set(null); // Ensure store is reset on error
     }
 }
 
 // Fetch global stats
 export async function fetchGlobalStats() {
     try {
-        const response = await api.v1.chain.get_table_rows({
-            code: CONTRACT_ACCOUNT,
-            scope: CONTRACT_ACCOUNT,
+        const response = await tonomyApi.v1.chain.get_table_rows({
+            code: TONOMY_CONTRACT_ACCOUNT,
+            scope: TONOMY_CONTRACT_ACCOUNT,
             table: "stats",
             limit: 1,
             json: true
@@ -78,18 +78,21 @@ export async function fetchGlobalStats() {
                 totalUsers: response.rows[0].total_users,
                 lastRegistered: response.rows[0].last_registered
             });
+        } else {
+            globalStats.set(null);
         }
     } catch (e) {
         console.error("Error fetching global stats:", e);
+        globalStats.set(null); // Ensure store is reset on error
     }
 }
 
 // Fetch contract config
 export async function fetchContractConfig() {
     try {
-        const response = await api.v1.chain.get_table_rows({
-            code: CONTRACT_ACCOUNT,
-            scope: CONTRACT_ACCOUNT,
+        const response = await tonomyApi.v1.chain.get_table_rows({
+            code: TONOMY_CONTRACT_ACCOUNT,
+            scope: TONOMY_CONTRACT_ACCOUNT,
             table: "config",
             limit: 1,
             json: true
@@ -106,16 +109,19 @@ export async function fetchContractConfig() {
                 rewardSymbol: response.rows[0].reward_symbol,
                 rewardRate: response.rows[0].reward_rate
             });
+        } else {
+            contractConfig.set(null);
         }
     } catch (e) {
         console.error("Error fetching contract config:", e);
+        contractConfig.set(null); // Ensure store is reset on error
     }
 }
 
 // Register user action
 export async function registerUser(account: string, inviter: string) {
     return {
-        account: CONTRACT_ACCOUNT,
+        account: TONOMY_CONTRACT_ACCOUNT,
         name: "registeruser",
         authorization: [{
             actor: account,
@@ -131,7 +137,7 @@ export async function registerUser(account: string, inviter: string) {
 // Claim reward action
 export async function claimReward(account: string) {
     return {
-        account: CONTRACT_ACCOUNT,
+        account: TONOMY_CONTRACT_ACCOUNT,
         name: "claimreward",
         authorization: [{
             actor: account,
